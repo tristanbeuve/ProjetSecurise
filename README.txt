@@ -1,4 +1,4 @@
-Pour créer la bae de donnée vous trouverez un script de création en sql qui créera la base de données.
+Pour créer la base de donnée vous trouverez un script de création en sql qui créera la base de données dans le dossier SQL.
 
 Ensuite il suffit de changer la chaine de connexion dans le fichier .env à la ligne 30 "DATABASE_URL".
 
