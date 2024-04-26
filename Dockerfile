@@ -1,26 +1,47 @@
-# Use the official image as a parent image
-FROM php:7.4-apache
+FROM php:8.2-apache
 
-# Set the working directory in the container
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+#### Ecrire une instruction RUN pour le fichier Dockerfile qui modifie le fichier /etc/apache2/sites-available/000-default.conf pour avoir en DocumentRoot /var/www/html/public
+RUN sed -i 's#/var/www/html#/var/www/html/public#g' /etc/apache2/sites-available/000-default.conf
+
+RUN apt-get update \
+    && apt-get install -qq -y --no-install-recommends \
+    cron \
+     vim \
+     locales coreutils apt-utils git libicu-dev g++ libpng-dev libxml2-dev libzip-dev libonig-dev libxslt-dev unixodbc-dev
+
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
+    echo "fr_FR.UTF-8 UTF-8" >> /etc/locale.gen && \
+    locale-gen
+
+RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
+   mv composer.phar /usr/local/bin/composer
+
+RUN docker-php-ext-configure intl
+RUN docker-php-ext-install pdo gd opcache intl zip calendar dom mbstring zip gd xsl && a2enmod rewrite
+RUN pecl install apcu && docker-php-ext-enable apcu
+
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
+    install-php-extensions amqp
+
+RUN pecl install sqlsrv && docker-php-ext-enable sqlsrv
+RUN pecl install pdo_sqlsrv && docker-php-ext-enable pdo_sqlsrv
+RUN curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
+RUN curl https://packages.microsoft.com/keys/microsoft.asc |  tee /etc/apt/trusted.gpg.d/microsoft.asc
+RUN apt-get update && ACCEPT_EULA=Y apt-get install -y msodbcsql18
+
+
 WORKDIR /var/www/html
 
-# Copy composer.json and install dependencies
-COPY composer.json ./
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN composer install
+COPY --chown=www-data: . .
 
-# Copy the rest of your app's source code from your host to your image filesystem.
-COPY . .
+RUN chown -R www-data: ./
 
-# Expose port 80
-EXPOSE 80
+USER www-data
 
-# Use the default production configuration
-RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-
-# Configure Apache
-RUN a2enmod rewrite
-COPY .docker/vhost.conf /etc/apache2/sites-available/000-default.conf
-
-# Start Apache service
-CMD ["apache2-foreground"]
+ENV APP_ENV prod
+ENV APP_DEBUG 0
+RUN composer install --no-interaction --no-scripts

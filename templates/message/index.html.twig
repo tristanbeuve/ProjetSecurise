@@ -21,8 +21,18 @@
         </div>
         {{ form_end(form) }}
         <script>
-            $(document).ready(function() {
-                $('.summernote').summernote();
+            $('.summernote').summernote({
+                codeviewFilter: false,
+                codeviewIframeFilter: true,
+                toolbar: [
+                    // [groupName, [list of button]]
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']]
+                ]
             });
         </script>
     </div>
