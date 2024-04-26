@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   web:
-    image: shaony00/chatjaipt
+    image: shaony00/chatjaipt:latest
     ports:
       - "8000:80"
     volumes:
