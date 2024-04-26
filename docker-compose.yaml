@@ -1,10 +1,8 @@
-version: '3.7'
+version: '3.8'
 
 services:
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: shaony00/chatjaipt
     ports:
       - "8000:80"
     volumes:
@@ -12,12 +10,17 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: "sqlsrv://sa:Not24get@db:1433/ChatJaiPT"
+      - DATABASE_URL=sqlsrv://sa:Not24get@db:1433/ChatJaiPT
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=sql2022_
     ports:
       - "1433:1433"
-    environment:
-      SA_PASSWORD: "Not24get"
-      ACCEPT_EULA: "Y"
+    volumes:
+      - db-data:/var/opt/mssql
+
+volumes:
+  db-data:

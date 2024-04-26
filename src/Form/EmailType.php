@@ -16,7 +16,6 @@ class EmailDTOType extends AbstractType
         $builder
             ->add('email', EmailType::class, [
                 'label' => 'Email',
-                'required' => true,
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Submit',

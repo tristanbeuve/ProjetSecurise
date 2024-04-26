@@ -15,12 +15,10 @@ class ForgotPasswordType extends AbstractType
     {
         $builder
             ->add('password', PasswordType::class, [
-                'label' => 'New Password',
-                'required' => true,
+                'label' => 'Nouveau mot de passe',
             ])
             ->add('confirmPassword', PasswordType::class, [
-                'label' => 'Confirm New Password',
-                'required' => true,
+                'label' => 'Confirmer le mot de passe',
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Submit',
