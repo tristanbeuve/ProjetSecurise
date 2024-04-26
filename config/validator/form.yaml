@@ -1,4 +1,4 @@
-App\Entity\Message:
+App\DTO\MessageDto:
   properties:
     body:
       - NotBlank:
@@ -9,22 +9,28 @@ App\Entity\Message:
           minMessage: "Votre message doit faire au moins {{ limit }} caractères"
           maxMessage: "Votre message doit faire au plus {{ limit }} caractères"
 
-App\Entity\User:
+App\DTO\Forgot_PasswordDto:
   properties:
-    email:
-      - Email:
-          message: "le champ Email {{ value }} n'est pas valide"
-      - NotBlank:
-          message: "le champ Email ne peut pas être vide"
-    nickname:
-      - Length:
-          min: 3
-          minMessage: "le champ Nom {{ value }} est trop court"
-      - NotBlank:
-          message: "le champ Nom ne peut pas être vide"
     password:
       - Length:
           min: 8
           minMessage: "Votre mot de passe doit faire au moins {{ limit }} caractères"
       - NotBlank:
           message: "Le mot de passe ne peut pas être vide"
+    confirm_password:
+        - Length:
+            min: 8
+            minMessage: "Votre mot de passe doit faire au moins {{ limit }} caractères"
+        - NotBlank:
+            message: "Le mot de passe ne peut pas être vide"
+        - Expression:
+            expression: "this.getPassword() === this.getConfirmPassword()"
+            message: "Les mots de passe ne correspondent pas"
+
+App\DTO\EmailDTO:
+  properties:
+    email:
+      - Email:
+          message: "le champ Email {{ value }} n'est pas valide"
+      - NotBlank:
+          message: "le champ Email ne peut pas être vide"
